@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <title>{{title}}</title>
+        <link rel="stylesheet" href="/stylesheets/index.css">
+        <link rel="stylesheet" href="/stylesheets/header.css">
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    </head>
+    <body onload="listener()">
+
+    <div class="welcomeContent">
+        <h1>Welcome to Fictionary</h1>
+
+        <input type='text' id='word' placeholder='Enter word'/>
+
+        <h1 id='word-display'></h1>
+
+        <h1 id='def-display'></h1>
+
+    </div>
+
+    <script>
+        function sendPost(textbox) {
+            let text = textbox.value;
+            if (text.length < 1)
+                return
+            textbox.value='';
+            let wd = document.getElementById('word-display');
+            wd.innerText=text;
+            console.log(text);
+
+
+            const post_url = "http://hackathon.chrisdaw.net:8000/word";
+            const config = {
+                headers: {
+                    'Content-Type': "application/json"
+                }
+            }
+            const data = {
+                    word: text
+                }
+            axios.post(
+                post_url, 
+                data,
+                config
+            )
+            .then(
+                data=>{
+                    let def = data['data']['definition'];
+                    console.log(def);
+                    let dd = document.getElementById('def-display');
+                    dd.innerText = def;
+                })
+            .catch(err=>console.log(err))
+        }
+
+        function listener() {
+            let textbox = document.getElementById("word");
+            textbox.onkeyup = function(e) {
+                if (e.keyCode == 13) {
+                    sendPost(textbox);
+                }
+            }
+        }
+    </script>
+    </body>
+</html>
