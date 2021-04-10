@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import pandas as pd
+import torch
 from torch.utils.data import DataLoader
 from torch.utils import data
 import numpy as np
 
 class Dataset(data.Dataset):
-    def __init__(self, txt_list, tokenizer, gpt2_type="gpt2", max_length=max_flavour):
+    def __init__(self, txt_list, tokenizer, gpt2_type="gpt2", max_length=max_length):
 
         self.tokenizer = tokenizer # the gpt2 tokenizer we instantiated
         self.input_ids = []

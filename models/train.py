@@ -22,7 +22,7 @@ using a masked language modeling (MLM) loss.
 from data import Dataset
 import torch
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, random_split
-from transformers import GPT2LMHeadModel, GPT2Config, GPT2Tokenizer, AdamW, get_linear_schedule_with_warmup
+from transformers import GPT2LMHeadModel, GPT2Config, GPT2Tokenizer, AdamW, get_linear_schedule_with_warmup, Trainer, TrainingArguments
 import numpy as np
 import random
 
@@ -43,17 +43,6 @@ val_size = len(dataset) - train_size
 
 train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
 
-train_dataloader = DataLoader(
-            train_dataset,  
-            sampler = RandomSampler(train_dataset), # Sampling for training is random
-            batch_size = 1
-        )
-
-validation_dataloader = DataLoader(
-            val_dataset, 
-            sampler = SequentialSampler(val_dataset), # Sampling for validation is sequential as the order doesn't matter.
-            batch_size = 1 
-        )
 # Loading the model configuration and setting it to the GPT2 standard settings.
 config = GPT2Config.from_pretrained('gpt2', output_hidden_states=False)
 
@@ -103,19 +92,19 @@ optimizer = AdamW(model.parameters(),
                   eps = 1e-8
                 )
 
-"""
-Total training steps is the number of data points, times the number of epochs. 
-Essentially, epochs are training cycles, how many times each point will be seen by the model. 
-"""
+training_args = TrainingArguments(
+        output_dir='./outputs',
+        num_train_epochs=4,
+        per_device_train_batch_size=1,
+        per_device_eval_batch_size=1,
+        warmup_steps=100,
+        weight_decay=.01,
+        logging_dir='./logs'
+)
 
-total_steps = len(train_dataloader) * epochs
-
-"""
-We can set a variable learning rate which will help scan larger areas of the 
-problem space at higher LR earlier, then fine tune to find the exact model minima 
-at lower LR later in training.
-"""
-scheduler = get_linear_schedule_with_warmup(optimizer, 
-                                            num_warmup_steps = warmup_steps, 
-                                            num_training_steps = total_steps)
-
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,
+    eval_dataset=val_dataset
+)
