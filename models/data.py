@@ -5,11 +5,28 @@ import torch
 from torch.utils.data import DataLoader
 from torch.utils import data
 import numpy as np
+from transformers import AutoTokenizer, AutoConfig
 
 class Dataset(data.Dataset):
-    def __init__(self, txt_list, tokenizer, gpt2_type="gpt2", max_length=max_length):
+    # class fields
+    MODEL = 'gpt2'
 
-        self.tokenizer = tokenizer # the gpt2 tokenizer we instantiated
+
+    def get_tokenizer(special_tokens=None):
+        tokenizer = AutoTokenizer.from_pretrained(MODEL) #GPT2Tokenizer
+        
+        if special_tokens:
+            tokenizer.add_special_tokens(special_tokens)
+            print("Special tokens added")
+
+        return tokenizer
+
+
+    def __init__(self, txt_list, tokenizer, gpt2_type="gpt2", max_length=max_length):
+        
+        
+
+        self.tokenizer = get_tokenizer(special_tokens=SPECIAL_TOKENS) # the gpt2 tokenizer we instantiated
         self.input_ids = []
         self.attn_masks = []
 
