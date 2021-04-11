@@ -10,11 +10,6 @@ const session = require('express-session');
 const flash = require('connect-flash');
 
 var app = express();
-app.use(session({
-    secret:'mynicknameisbuzz',
-    saveUninitialized: true,
-    resave: true
-}));
 
 app.use(flash());
 /* Routing to specific JS file */

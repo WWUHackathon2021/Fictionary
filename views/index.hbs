@@ -24,8 +24,17 @@
             <h1 id="word-display" class="word-text"></h1>
 
             <h3 id="def-display" class="def-text"></h3>
+        </div>
 
+        <div class="buttons" id="buttons-div" style="opacity: 0">
+            <a class="twitter-share-button"
+               href="https://twitter.com/intent/tweet?text=Hello%20from%20Fictionary"
+               data-size="large">
+                Tweet
+            </a>
             <a id="merch-btn-display" class="button" href="/">Put this on a mug!</a>
+            
+            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
         </div>
     </div>
 
@@ -34,17 +43,18 @@
             let text = textbox.value;
             if (text.length < 1)
                 return
+                
             textbox.value='';
             let wd = document.getElementById('word-display');
             let dd = document.getElementById('def-display');
-            let merchBtn = document.getElementById('merch-btn-display');
+            let buttondiv = document.getElementById('buttons-div');
+            buttondiv.style.opacity = '0';
             dd.style.opacity = '0';
             wd.style.opacity = '0';
+
             wd.innerText=text;
             wd.style.opacity = '1';
-            merchBtn.style.opacity = '1';
             console.log(text);
-
 
             const post_url = "http://hackathon.chrisdaw.net:8000/word";
             const config = {
@@ -67,13 +77,18 @@
                     dd.innerText = def;
                     dd.style.opacity = '1';
 
-                    /* Show and enable merch button */
-                    let str = wd.innerText + dd.innerText;
+                    /* Enable merch button */
+                    let str = wd.innerText + " = " + dd.innerText;
                     str = encodeURIComponent(str);
                     console.log(`Word + definition is ${str}`);
                     const link = `https://www.zazzle.com/fictionary_mug-168563178968739930?t_text_txt=${str}&ed=True&r=3856612`
+            
+                    let merchBtn = document.getElementById('merch-btn-display');
                     merchBtn.setAttribute("href", link);
                     console.log(`Merch button hyperlink changed to ${link}`);
+
+                    /* Show all buttons */
+                    buttondiv.style.opacity = '1';
                 })
             .catch(err=>console.log(err))
         }

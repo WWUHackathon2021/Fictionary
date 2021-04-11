@@ -44,11 +44,11 @@ input, input:focus, input[type], input:focus-visible {
 
 .results {
   margin-top: 2rem; }
-  .results .word-text, .results .def-text {
+  .results .word-text, .results .def-text, .results .buttons {
     opacity: 0;
     transition: 2s opacity; }
 
-.welcomeContent, .results {
+.welcomeContent, .results, .buttons {
   width: 30%;
   margin-left: auto;
   margin-right: auto; }
@@ -65,5 +65,13 @@ input, input:focus, input[type], input:focus-visible {
   margin: 0.5rem 0 0 1rem;
   color: #a0a0a0;
   word-wrap: break-word; }
+
+.twitter-share-button, .button {
+  display: flex;
+  margin: 0.5rem 0 0 1rem;
+  transition: 5s opacity; }
+
+a, #buttons-div {
+  transition: 5s opacity; }
 
 /*# sourceMappingURL=index.css.map */
