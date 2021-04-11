@@ -53,7 +53,7 @@ function convertTextToImage(str) {
     req.end();
 }
 
-convertTextToImage("Logan = a kind of lovable");
+// convertTextToImage("Logan = a kind of lovable");
 
 // ATTEMPTED TO USE FETCH API BUT THE RESPONSE WAS JUST THE REQUEST
 // const fetch = require("node-fetch");

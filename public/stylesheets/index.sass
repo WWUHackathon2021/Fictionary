@@ -56,11 +56,11 @@ input, input:focus, input[type], input:focus-visible
 .results
   margin-top: 2rem
 
-  .word-text, .def-text
+  .word-text, .def-text, .buttons
     opacity: 0
     transition: 2s opacity
 
-.welcomeContent, .results
+.welcomeContent, .results, .buttons
   width: 30%
   margin-left: auto
   margin-right: auto
@@ -78,3 +78,11 @@ input, input:focus, input[type], input:focus-visible
   margin: 0.5rem 0 0 1rem
   color: $gray
   word-wrap: break-word
+
+.twitter-share-button, .button
+  display: flex
+  margin: 0.5rem 0 0 1rem
+  transition: 5s opacity
+
+a, #buttons-div
+  transition: 5s opacity

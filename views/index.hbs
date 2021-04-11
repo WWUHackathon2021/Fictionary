@@ -25,6 +25,15 @@
 
             <h3 id="def-display" class="def-text"></h3>
         </div>
+
+        <div class="buttons" id="buttons-div" style="opacity: 0">
+            <a class="twitter-share-button"
+               href="https://twitter.com/intent/tweet?text=Hello%20from%20Fictionary"
+               data-size="large">
+                Tweet
+            </a>
+            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        </div>
     </div>
 
     <script>
@@ -35,6 +44,8 @@
             textbox.value='';
             let wd = document.getElementById('word-display');
             let dd = document.getElementById('def-display');
+            let buttondiv = document.getElementById('buttons-div');
+            buttondiv.style.opacity = '0';
             dd.style.opacity = '0';
             wd.style.opacity = '0';
             wd.innerText=text;
@@ -62,6 +73,7 @@
                     console.log(def);
                     dd.innerText = def;
                     dd.style.opacity = '1';
+                    buttondiv.style.opacity = '1';
                 })
             .catch(err=>console.log(err))
         }

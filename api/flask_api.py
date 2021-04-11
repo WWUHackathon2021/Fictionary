@@ -12,10 +12,12 @@ cors = CORS(app)
 
 # ML model definition
 loaded_models = {
-    'plain-1': 'data/pytorch_model.bin',
-    'plain-5': 'data/dict1_epoch5.bin',
+    '1': 'data/dict-short.bin',
+    '2': 'data/dict-long.bin',
+    '3': 'data/urbandict.bin',
 }
-weights = loaded_models['plain-5']
+model = input(f"{loaded_models}\nEnter model number from above: ")
+weights = loaded_models[model]
 model = models.get_model_for_api(weights_path=weights)
 
 
@@ -25,7 +27,7 @@ def word():
     word = data['word']
 
     definition = models.define(model, word, num_return=1)[0]
-    definition.replace(']', '').replace('[', '')
+    definition.replace(']', '').replace('[', '').replace('fuck', 'duck').replace('cunt', 'trunk')
     if definition[-1] != '.':
         definition += '.'
 
@@ -47,6 +49,5 @@ if __name__ == '__main__':
     for k, weights_path in loaded_models.items():
         loaded_models[k] = models.get_model(weights_path)
     """
-
     app.debug=True
     app.run(host='0.0.0.0')  # run our Flask app
