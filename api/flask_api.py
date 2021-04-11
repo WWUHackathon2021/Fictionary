@@ -15,6 +15,7 @@ loaded_models = {
     '1': 'data/dict-short.bin',
     '2': 'data/dict-long.bin',
     '3': 'data/urbandict.bin',
+    '4': 'data/urbandict-long.bin',
 }
 model = input(f"{loaded_models}\nEnter model number from above: ")
 weights = loaded_models[model]
@@ -26,10 +27,15 @@ def word():
     data = request.json
     word = data['word']
 
-    definition = models.define(model, word, num_return=1)[0]
-    definition.replace(']', '').replace('[', '').replace('fuck', 'duck').replace('cunt', 'trunk')
-    if definition[-1] != '.':
-        definition += '.'
+    try:
+        definition = models.define(model, word, num_return=1)[0]
+        definition = definition.replace(']', '').replace('[', '')\
+                        .replace('fuck', 'duck').replace('cunt', 'trunk')\
+                        .replace('sex', 'love').replace('genital', 'appendage')
+        if definition[-1] != '.':
+            definition += '.'
+    except:
+        definition = "This word is undefinable. Good job..."
 
     resp_data = json.dumps(
             {'definition': definition}

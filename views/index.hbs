@@ -49,6 +49,7 @@
             let dd = document.getElementById('def-display');
             let buttondiv = document.getElementById('buttons-div');
             buttondiv.style.opacity = '0';
+            buttondiv.style.visibility = 'hidden';
             dd.style.opacity = '0';
             wd.style.opacity = '0';
 
@@ -89,6 +90,7 @@
 
                     /* Show all buttons */
                     buttondiv.style.opacity = '1';
+                    buttondiv.style.visibility = 'visible';
                 })
             .catch(err=>console.log(err))
         }

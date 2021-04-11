@@ -72,6 +72,7 @@ input, input:focus, input[type], input:focus-visible {
   transition: 5s opacity; }
 
 a, #buttons-div {
-  transition: 5s opacity; }
+  transition: 5s opacity;
+  transition: 0s visibility; }
 
 /*# sourceMappingURL=index.css.map */
