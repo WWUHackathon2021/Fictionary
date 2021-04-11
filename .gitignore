@@ -4,3 +4,4 @@ package-lock.json
 __pycache__/
 pytorch_model.bin
 optimizer.pt
+*pkl

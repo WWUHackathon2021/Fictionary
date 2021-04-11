@@ -128,15 +128,16 @@ def define(model,word):
 def main(args):
     args = parse_all_args()
     tokenizer = get_tokenizer(special_tokens=SPECIAL_TOKENS)
-    model = get_model(tokenizer, 
-                    special_tokens=SPECIAL_TOKENS,
-                    load_model_path='/home/pashbyl/Fictionary/outputs/pytorch_model.bin'
-                    )
     
     if args.train_on:
+        # Only load model from path if not predicting
+        model = get_model(tokenizer, 
+                    special_tokens=SPECIAL_TOKENS
+                    )
+        
         # Instantiate Dataset
-        train_dataset = Dataset('/home/dawc/Development/data/train.csv', tokenizer, MAXLEN)
-        dev_dataset = Dataset('/home/dawc/Development/data/valid.csv', tokenizer, MAXLEN)
+        train_dataset = Dataset('/home/dawc/Development/data/ud_train_small.csv', tokenizer, MAXLEN)
+        dev_dataset = Dataset('/home/dawc/Development/data/ud_valid_small.csv', tokenizer, MAXLEN)
 
         for parameter in model.parameters():
             parameter.requires_grad = False
@@ -160,10 +161,10 @@ def main(args):
                         )
 
         training_args = TrainingArguments(
-                output_dir='./outputs/dict1_epoch4',
-                num_train_epochs=5,
-                per_device_train_batch_size=25,
-                per_device_eval_batch_size=25,
+                output_dir='/home/pashbyl/Fictionary/outputs/dict2_epoch1_small',
+                num_train_epochs=1,
+                per_device_train_batch_size=27,
+                per_device_eval_batch_size=27,
                 gradient_accumulation_steps=5,
                 warmup_steps=100,
                 weight_decay=.01,
@@ -185,6 +186,11 @@ def main(args):
         trainer.save_model()
         
     else:
+        model = get_model(tokenizer, 
+                    special_tokens=SPECIAL_TOKENS,
+                    load_model_path='/home/pashbyl/Fictionary/outputs/dict1_epoch5/pytorch_model.bin'
+                    )
+        
         now = time.time()
         define(model,args.word)
         print('Time to define was {0} seconds'.format(round(time.time()-now,3)))
