@@ -18,7 +18,7 @@ input, input:focus, input[type], input:focus-visible {
   outline: none; }
 
 .welcomeContent {
-  background-color: #404040;
+  background-image: linear-gradient(to top, rgba(255, 0, 0, 0), #200093);
   height: 100%;
   padding: 8%;
   box-shadow: 2px 2px 5px #e4e4e4;
