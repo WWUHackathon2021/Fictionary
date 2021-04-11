@@ -23,7 +23,7 @@ function convertTextToImage(str) {
     const fontSize = "12"
     const imgType = "png"
 
-    const params = `?text=${text}&fcolor=${color}&bcolor=${backgroundColor}&font=${fontFamily}&size=${fontSize}&type=${imgType}`;
+    const params = `/?text=${text}&fcolor=${color}&bcolor=${backgroundColor}&font=${fontFamily}&size=${fontSize}&type=${imgType}`;
 
     const options = {
         "method": "GET",
@@ -66,9 +66,9 @@ convertTextToImage("Logan = a kind of lovable");
 //     const fontSize = "12"
 //     const imgType = "png"
 
-//     const params = `?text=${text}&fcolor=${color}&bcolor=${backgroundColor}&font=${fontFamily}&size=${fontSize}&type=${imgType}`;
+//     const params = `/?text=${text}&fcolor=${color}&bcolor=${backgroundColor}&font=${fontFamily}&size=${fontSize}&type=${imgType}`;
 
-//     const endpoint = `https://img4me.p.rapidapi.com/${params}`
+//     const endpoint = `https://img4me.p.rapidapi.com${params}`
 
 //     const options = {
 //         method: "GET",
