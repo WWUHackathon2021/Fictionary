@@ -3,20 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node --trace-warnings ./bin/www"
   },
   "dependencies": {
     "alert": "^5.0.10",
     "body-parser": "^1.17.1",
     "connect-flash": "^0.1.1",
     "debug": "~2.6.9",
+    "deepai": "^1.0.17",
+    "dotenv": "^8.2.0",
     "express": "^4.16.4",
     "express-session": "^1.17.1",
     "hbs": "^4.1.1",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^7.3.0",
     "morgan": "~1.9.1",
-    "node-gyp": "^3.8.0",
     "node-sass-middleware": "0.11.0",
     "nodemailer": "^6.5.0",
     "popups": "^1.1.3",
