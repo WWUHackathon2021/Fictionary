@@ -56,6 +56,10 @@ input, input:focus, input[type], input:focus-visible
 .results
   margin-top: 2rem
 
+  .word-text, .def-text
+    opacity: 0
+    transition: 2s opacity
+
 .welcomeContent, .results
   width: 30%
   margin-left: auto
@@ -73,4 +77,4 @@ input, input:focus, input[type], input:focus-visible
   text-align: left
   margin: 0.5rem 0 0 1rem
   color: $gray
-  word-wrap: break-word;
+  word-wrap: break-word

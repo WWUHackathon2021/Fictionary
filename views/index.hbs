@@ -23,7 +23,7 @@
         <div class="results">
             <h1 id="word-display" class="word-text"></h1>
 
-            <h2 id="def-display" class="def-text"></h2>
+            <h3 id="def-display" class="def-text"></h3>
         </div>
     </div>
 
@@ -34,7 +34,11 @@
                 return
             textbox.value='';
             let wd = document.getElementById('word-display');
+            let dd = document.getElementById('def-display');
+            dd.style.opacity = '0';
+            wd.style.opacity = '0';
             wd.innerText=text;
+            wd.style.opacity = '1';
             console.log(text);
 
 
@@ -56,8 +60,8 @@
                 data=>{
                     let def = data['data']['definition'];
                     console.log(def);
-                    let dd = document.getElementById('def-display');
                     dd.innerText = def;
+                    dd.style.opacity = '1';
                 })
             .catch(err=>console.log(err))
         }
@@ -67,6 +71,8 @@
             textbox.onkeyup = function(e) {
                 if (e.keyCode == 13) {
                     sendPost(textbox);
+                    let dd = document.getElementById('def-display');
+                    dd.innerText='';
                 }
             }
         }
