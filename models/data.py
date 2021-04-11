@@ -1,59 +1,42 @@
 #!/usr/bin/env python3
 
+from os import read
 import pandas as pd
 import torch
-from torch.utils.data import DataLoader
 from torch.utils import data
 import numpy as np
-from transformers import AutoTokenizer, AutoConfig
+import csv
 
 class Dataset(data.Dataset):
-    # class fields
-    MODEL = 'gpt2'
+    def __init__(self, data, tokenizer,max_length, gpt2_type="gpt2"):
+        defs,words = [],[]
 
-
-    def get_tokenizer(special_tokens=None):
-        tokenizer = AutoTokenizer.from_pretrained(MODEL) #GPT2Tokenizer
+        with open(data, newline='') as csvfile:
+            reader = csv.reader(csvfile, delimiter='\t')
+            for i,row in enumerate(reader):
+                if i == 0: continue
+                words.append(row[0])
+                defs.append(row[1])
         
-        if special_tokens:
-            tokenizer.add_special_tokens(special_tokens)
-            print("Special tokens added")
-
-        return tokenizer
-
-
-    def __init__(self, txt_list, tokenizer, gpt2_type="gpt2", max_length=max_length):
-        
-        
-
-        self.tokenizer = get_tokenizer(special_tokens=SPECIAL_TOKENS) # the gpt2 tokenizer we instantiated
-        self.input_ids = []
-        self.attn_masks = []
-
-        for txt in txt_list:
-            """
-            This loop will iterate through each entry in the flavour text corpus.
-            For each bit of text it will prepend it with the start of text token,
-            then append the end of text token and pad to the maximum length with the 
-            pad token. 
-            """
-
-            encodings_dict = tokenizer('<|startoftext|>'+ txt + '<|endoftext|>', 
-                                        truncation=True, 
-                                        max_length=max_length, 
-                                        padding="max_length")
-            
-            """
-            Each iteration then appends either the encoded tensor to a list,
-            or the attention mask for that encoding to a list. The attention mask is
-            a binary list of 1's or 0's which determine whether the langauge model
-            should take that token into consideration or not. 
-            """
-            self.input_ids.append(torch.tensor(encodings_dict['input_ids']))
-            self.attn_masks.append(torch.tensor(encodings_dict['attention_mask']))
+        self.tokenizer = tokenizer
+        self.defs = defs
+        self.words = words
+        self.max_length = max_length
         
     def __len__(self):
-        return len(self.input_ids)
+        return len(self.words)
 
     def __getitem__(self, idx):
-        return self.input_ids[idx], self.attn_masks[idx] 
+
+        input = "<|BOS|>" + self.words[idx] + "<|SEP|>" + self.defs[idx] + "<|EOS|>"
+        encodings_dict = self.tokenizer(input,                                   
+                                   truncation=True, 
+                                   max_length=self.max_length, 
+                                   padding="max_length")
+
+        input_ids = encodings_dict['input_ids']
+        attention_mask = encodings_dict['attention_mask']
+
+        return {'label': torch.tensor(input_ids),
+                'input_ids': torch.tensor(input_ids), 
+                'attention_mask': torch.tensor(attention_mask)}

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # coding=utf-8
 # Copyright 2018 The Google AI Language Team Authors and The HuggingFace Inc. team.
 # Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
@@ -21,90 +23,171 @@ using a masked language modeling (MLM) loss.
 
 from data import Dataset
 import torch
-from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, random_split
-from transformers import GPT2LMHeadModel, GPT2Config, GPT2Tokenizer, AdamW, get_linear_schedule_with_warmup, Trainer, TrainingArguments
+from transformers import (
+    AdamW, 
+    Trainer, 
+    TrainingArguments,
+    AutoTokenizer,
+    AutoConfig,
+    AutoModelForPreTraining
+)
 import numpy as np
-import random
+import time
+import sys
+import argparse
 
-tokenizer = GPT2Tokenizer.from_pretrained('gpt2', 
-                                          bos_token='<|startoftext|>', 
-                                          eos_token='<|endoftext|>', 
-                                          pad_token='<|pad|>')
+# Constants
+SPECIAL_TOKENS  = { "bos_token": "<|BOS|>",
+                    "eos_token": "<|EOS|>",
+                    "unk_token": "<|UNK|>",                    
+                    "pad_token": "<|PAD|>",
+                    "sep_token": "<|SEP|>"}
+MODEL           = 'gpt2' #{gpt2, gpt2-medium, gpt2-large, gpt2-xl}
 
-# # Test for longest sequence
-# max_flavour = max([len(tokenizer.encode(card)) for card in cards])
+MAXLEN          = 130
 
-# Instantiate Dataset
-dataset = Dataset(data, tokenizer, max_length=max_flavour)
+def parse_all_args():
+    """
+    Parses commandline arguments
+    """
+    parser = argparse.ArgumentParser()
 
-# Split into training and validation sets
-train_size = int(0.9 * len(dataset))
-val_size = len(dataset) - train_size
-
-train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
-
-# Loading the model configuration and setting it to the GPT2 standard settings.
-config = GPT2Config.from_pretrained('gpt2', output_hidden_states=False)
-
-# Instantiate Model
-model = GPT2LMHeadModel.from_pretrained('gpt2', config=config)
-model.resize_token_embeddings(len(tokenizer))
-
-for parameter in model.parameters():
-    parameter.requires_grad = False
-
-for i, m in enumerate(model.transformer.h):        
-    #Only un-freeze the last n transformer blocks
-    if i >= 6:
-        for parameter in m.parameters():
-            parameter.requires_grad = True 
-
-for parameter in model.transformer.ln_f.parameters():        
-    parameter.requires_grad = True
-
-for parameter in model.lm_head.parameters():        
-    parameter.requires_grad = True
-
-# Tell pytorch to run this model on the GPU.
-device = torch.device("cuda")
-model.cuda()
-
-# This step is optional but will enable reproducible runs.
-seed_val = 42
-
-random.seed(seed_val)
-np.random.seed(seed_val)
-torch.manual_seed(seed_val)
-torch.cuda.manual_seed_all(seed_val)
-
-# We wil create a few variables to define the training parameters of the model
-# epochs are the training rounds
-# the warmup steps are steps at the start of training that are ignored
-# every x steps we will sample the model to test the output
-
-epochs = 4
-warmup_steps = 1e2
-sample_every = 100
-
-# AdamW is a class from the huggingface library, it is the optimizer we will be using, and we will only be instantiating it with the default parameters. 
-optimizer = AdamW(model.parameters(),
-                  lr = 5e-4,
-                  eps = 1e-8
+    parser.add_argument("word",
+                    help="Which word would you like defined?",
+                    type=str
                 )
 
-training_args = TrainingArguments(
-        output_dir='./outputs',
-        num_train_epochs=4,
-        per_device_train_batch_size=1,
-        per_device_eval_batch_size=1,
-        warmup_steps=100,
-        weight_decay=.01,
-        logging_dir='./logs'
-)
+    parser.add_argument("--train_on",
+                    help="Generate definition or train model?",
+                    type=bool,
+                    default=False
+                )
+    return parser.parse_args()
 
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=train_dataset,
-    eval_dataset=val_dataset
-)
+def get_tokenizer(special_tokens=None):
+    tokenizer = AutoTokenizer.from_pretrained(MODEL) #GPT2Tokenizer
+
+    if special_tokens:
+        tokenizer.add_special_tokens(special_tokens)
+    return tokenizer
+
+def get_model(tokenizer, special_tokens=None, load_model_path=None):
+
+    #GPT2LMHeadModel
+    if special_tokens:
+        config = AutoConfig.from_pretrained(MODEL, 
+                                            bos_token_id=tokenizer.bos_token_id,
+                                            eos_token_id=tokenizer.eos_token_id,
+                                            sep_token_id=tokenizer.sep_token_id,
+                                            pad_token_id=tokenizer.pad_token_id,
+                                            output_hidden_states=False)
+    else: 
+        config = AutoConfig.from_pretrained(MODEL,                                     
+                                            pad_token_id=tokenizer.eos_token_id,
+                                            output_hidden_states=False)    
+
+    #----------------------------------------------------------------#
+    model = AutoModelForPreTraining.from_pretrained(MODEL, config=config)
+
+    if special_tokens:
+        #Special tokens added, model needs to be resized accordingly
+        model.resize_token_embeddings(len(tokenizer))
+
+    if load_model_path:
+        model.load_state_dict(torch.load(load_model_path))
+
+    model.cuda()
+    return model
+
+def define(model,word):
+    prompt = SPECIAL_TOKENS['bos_token'] + word + SPECIAL_TOKENS['sep_token']
+    tokenizer = get_tokenizer(special_tokens=SPECIAL_TOKENS)
+    generated = torch.tensor(tokenizer.encode(prompt)).unsqueeze(0)
+    device = torch.device("cuda")
+    generated = generated.to(device)
+
+    model.eval()
+
+    # Top-p (nucleus) text generation (10 samples):
+    sample_outputs = model.generate(generated, 
+                                do_sample=True,   
+                                min_length=50, 
+                                max_length=MAXLEN,
+                                top_k=30,                                 
+                                top_p=0.7,        
+                                temperature=0.9,
+                                repetition_penalty=2.0,
+                                num_return_sequences=10
+                                )
+
+    for i, sample_output in enumerate(sample_outputs):
+        text = tokenizer.decode(sample_output, skip_special_tokens=True)
+        a = len(word)
+        print("{}: {}\n\n".format(i+1,  text[a:]))
+
+def main(args):
+    args = parse_all_args()
+    tokenizer = get_tokenizer(special_tokens=SPECIAL_TOKENS)
+    model = get_model(tokenizer, 
+                    special_tokens=SPECIAL_TOKENS,
+                    load_model_path='/home/pashbyl/Fictionary/outputs/pytorch_model.bin'
+                    )
+    
+    if args.train_on:
+        # Instantiate Dataset
+        train_dataset = Dataset('/home/dawc/Development/data/train.csv', tokenizer, MAXLEN)
+        dev_dataset = Dataset('/home/dawc/Development/data/valid.csv', tokenizer, MAXLEN)
+
+        for parameter in model.parameters():
+            parameter.requires_grad = False
+
+        for i, m in enumerate(model.transformer.h):        
+            #Only un-freeze the last n transformer blocks
+            if i >= 6:
+                for parameter in m.parameters():
+                    parameter.requires_grad = True 
+
+        for parameter in model.transformer.ln_f.parameters():        
+            parameter.requires_grad = True
+
+        for parameter in model.lm_head.parameters():        
+            parameter.requires_grad = True
+
+        # AdamW is a class from the huggingface library, it is the optimizer we will be using, and we will only be instantiating it with the default parameters. 
+        optimizer = AdamW(model.parameters(),
+                        lr = 5e-4,
+                        eps = 1e-8
+                        )
+
+        training_args = TrainingArguments(
+                output_dir='./outputs/dict1_epoch4',
+                num_train_epochs=5,
+                per_device_train_batch_size=25,
+                per_device_eval_batch_size=25,
+                gradient_accumulation_steps=5,
+                warmup_steps=100,
+                weight_decay=.01,
+                logging_dir='./logs'
+        )
+
+    #---------------------------------------------------#
+        
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=dev_dataset,
+            tokenizer=tokenizer
+        )
+    #---------------------------------------------------#
+
+        trainer.train()
+        trainer.save_model()
+        
+    else:
+        now = time.time()
+        define(model,args.word)
+        print('Time to define was {0} seconds'.format(time.time()-now))
+
+if __name__ ==  "__main__":
+    main(sys.argv)
