@@ -24,6 +24,8 @@
             <h1 id="word-display" class="word-text"></h1>
 
             <h3 id="def-display" class="def-text"></h3>
+
+            <a id="merch-btn-display" class="button" href="/">Put this on a mug!</a>
         </div>
     </div>
 
@@ -35,10 +37,12 @@
             textbox.value='';
             let wd = document.getElementById('word-display');
             let dd = document.getElementById('def-display');
+            let merchBtn = document.getElementById('merch-btn-display');
             dd.style.opacity = '0';
             wd.style.opacity = '0';
             wd.innerText=text;
             wd.style.opacity = '1';
+            merchBtn.style.opacity = '1';
             console.log(text);
 
 
@@ -62,6 +66,14 @@
                     console.log(def);
                     dd.innerText = def;
                     dd.style.opacity = '1';
+
+                    /* Show and enable merch button */
+                    let str = wd.innerText + dd.innerText;
+                    str = encodeURIComponent(str);
+                    console.log(`Word + definition is ${str}`);
+                    const link = `https://www.zazzle.com/fictionary_mug-168563178968739930?t_text_txt=${str}&ed=True&r=3856612`
+                    merchBtn.setAttribute("href", link);
+                    console.log(`Merch button hyperlink changed to ${link}`);
                 })
             .catch(err=>console.log(err))
         }
@@ -76,6 +88,8 @@
                 }
             }
         }
+
+        
     </script>
     </body>
 </html>

@@ -11,7 +11,8 @@ body, html {
 
 button {
   cursor: pointer;
-  border: none; }
+  border: none;
+  opacity: 0; }
 
 .icon {
   margin: 1rem; }
