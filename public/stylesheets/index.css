@@ -9,11 +9,6 @@ body, html {
   background: #000524;
   background: radial-gradient(circle, #011d34 0%, #01223b 36%, #012643 63%, #1a3f5c 100%); }
 
-button {
-  cursor: pointer;
-  border: none;
-  opacity: 0; }
-
 .icon {
   margin: 1rem; }
 
