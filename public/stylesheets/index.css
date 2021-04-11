@@ -43,6 +43,9 @@ input, input:focus, input[type], input:focus-visible {
 
 .results {
   margin-top: 2rem; }
+  .results .word-text, .results .def-text {
+    opacity: 0;
+    transition: 2s opacity; }
 
 .welcomeContent, .results {
   width: 30%;

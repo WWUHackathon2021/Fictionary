@@ -21,7 +21,6 @@ GPT and GPT-2 are fine-tuned using a causal language modeling (CLM) loss while B
 using a masked language modeling (MLM) loss.
 """
 
-from data import Dataset
 import torch
 from transformers import (
     AdamW, 
@@ -44,7 +43,7 @@ SPECIAL_TOKENS  = { "bos_token": "<|BOS|>",
                     "sep_token": "<|SEP|>"}
 MODEL           = 'gpt2' #{gpt2, gpt2-medium, gpt2-large, gpt2-xl}
 
-MAXLEN          = 130
+MAXLEN          = 75
 
 def parse_all_args():
     """
@@ -99,7 +98,7 @@ def get_model(tokenizer, special_tokens=None, load_model_path=None):
     model.cuda()
     return model
 
-def define(model,word):
+def define(model, word, num_return=10):
     prompt = SPECIAL_TOKENS['bos_token'] + word + SPECIAL_TOKENS['sep_token']
     tokenizer = get_tokenizer(special_tokens=SPECIAL_TOKENS)
     generated = torch.tensor(tokenizer.encode(prompt)).unsqueeze(0)
@@ -117,15 +116,30 @@ def define(model,word):
                                 top_p=0.7,        
                                 temperature=0.9,
                                 repetition_penalty=2.0,
-                                num_return_sequences=10
+                                num_return_sequences=num_return
                                 )
-
+    definitions = []
     for i, sample_output in enumerate(sample_outputs):
         text = tokenizer.decode(sample_output, skip_special_tokens=True)
         a = len(word)
-        print("{}: {}\n\n".format(i+1,  text[a:]))
+        print("{}: {}\n\n".format(word,  text[a:]))
+
+        definitions.append(text[a:])
+    
+    return definitions
+
+def get_model_for_api(weights_path='/home/pashbyl/Fictionary/outputs/pytorch_model.bin'):
+    tokenizer = get_tokenizer(special_tokens=SPECIAL_TOKENS)
+    model = get_model(
+            tokenizer,
+            special_tokens=SPECIAL_TOKENS,
+            load_model_path=weights_path,
+        )
+    return model
 
 def main(args):
+    from data import Dataset
+
     args = parse_all_args()
     tokenizer = get_tokenizer(special_tokens=SPECIAL_TOKENS)
     

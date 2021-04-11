@@ -2,7 +2,6 @@ var createError = require('http-errors');
 var express = require('express');
 var hbs = require('hbs');
 var path = require('path');
-var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
 var bodyParser=require('body-parser');
@@ -17,7 +16,6 @@ app.use(session({
     resave: true
 }));
 
-app.use(cookieParser());
 app.use(flash());
 /* Routing to specific JS file */
 var indexRouter = require('./routes/index');
