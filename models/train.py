@@ -187,7 +187,7 @@ def main(args):
     else:
         now = time.time()
         define(model,args.word)
-        print('Time to define was {0} seconds'.format(time.time()-now))
+        print('Time to define was {0} seconds'.format(round(time.time()-now,3)))
 
 if __name__ ==  "__main__":
     main(sys.argv)
