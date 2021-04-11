@@ -142,12 +142,12 @@ def main(args):
 
     args = parse_all_args()
     tokenizer = get_tokenizer(special_tokens=SPECIAL_TOKENS)
-    model = get_model(tokenizer, 
-                    special_tokens=SPECIAL_TOKENS,
-                    load_model_path='/home/pashbyl/Fictionary/outputs/pytorch_model.bin'
-                    )
     
     if args.train_on:
+        model = get_model(tokenizer, 
+            special_tokens=SPECIAL_TOKENS,
+        )
+
         # Instantiate Dataset
         train_dataset = Dataset('/home/dawc/Development/data/train.csv', tokenizer, MAXLEN)
         dev_dataset = Dataset('/home/dawc/Development/data/valid.csv', tokenizer, MAXLEN)
@@ -199,6 +199,11 @@ def main(args):
         trainer.save_model()
         
     else:
+        model = get_model(tokenizer, 
+                special_tokens=SPECIAL_TOKENS,
+                load_model_path='/home/pashbyl/dict2_epoch1_small.bin'
+                )
+
         now = time.time()
         define(model,args.word)
         print('Time to define was {0} seconds'.format(round(time.time()-now,3)))

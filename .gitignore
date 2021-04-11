@@ -6,3 +6,4 @@ __pycache__/
 test/
 pytorch_model.bin
 optimizer.pt
+*pkl
