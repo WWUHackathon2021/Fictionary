@@ -2,7 +2,7 @@ $primary: #7dceb4
 $secondary: #7f58cc
 $primary-compliment: #6fad9a
 $secondary-compliment: #614599
-$gray: #f5f5f5
+$gray: #a0a0a0
 $dark-gray: #404040
 $dark-gray-compliment: #404040
 $font-family: Arial, Helvetica, sans-serif
@@ -10,34 +10,67 @@ $transparent: rgba(255,0,0,0)
 
 body, html
   margin: 0
+  color: white
   height: 100vh
+  width: 50vw
   overflow-y: hidden
   width: 100%
   font-family: $font-family
+  background: rgb(0,5,36);
+  background: radial-gradient(circle, #011d34 0%, #01223b 36%, #012643 63%, #1a3f5c 100%);
 
 button
   cursor: pointer
   border: none
 
+.icon
+  margin: 1rem
+
+#word
+  margin-top: 2rem
+  border-radius: 2rem
+
 input, input:focus, input[type], input:focus-visible
-  padding: 1em
+  padding: 1rem
   text-align: center
   border: none
   width: 25vw
   font-weight: bold
   outline: none
+	
 
-.welcomeContent
-  // background-color: $dark-gray
-  background-image: linear-gradient(to top, $transparent, #200093)
+.page
   height: 100%
-  padding: 8%
+  padding: 5%
   box-shadow: 2px 2px 5px rgb(228, 228, 228)
   align-items: center
   justify-content: center
   text-align: center
 
   h1
-    color: $primary
+    color: white
+    font-weight: bold
   p
     font-size: 1.5em
+
+.results
+  margin-top: 2rem
+
+.welcomeContent, .results
+  width: 30%
+  margin-left: auto
+  margin-right: auto
+
+.welcomeContent
+  h1
+    margin-bottom: 2rem
+
+.word-text
+  text-align: left
+  margin: 0 0 0 0.5rem
+
+.def-text
+  text-align: left
+  margin: 0.5rem 0 0 1rem
+  color: $gray
+  word-wrap: break-word;
