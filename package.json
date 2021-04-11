@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node --trace-warnings ./bin/www"
   },
   "dependencies": {
     "alert": "^5.0.10",
