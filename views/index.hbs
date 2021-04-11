@@ -11,15 +11,20 @@
     </head>
     <body onload="listener()">
 
-    <div class="welcomeContent">
-        <h1>Welcome to Fictionary</h1>
+    <div class="page">
+        <div class="welcomeContent">
+            <img src="images/dictionary.png" class="icon" alt="icon" width="85" height="69">
+            
+            <h1>Welcome to Fictionary</h1>
+            <h3 class="word-text">gib·ber·ish</h3>
+            <h4 class="def-text">unintelligible or meaningless speech or writing; nonsense.</h5>
+            <input type="text" maxlength="32" id="word" placeholder="Enter a word"/>
+        </div>
+        <div class="results">
+            <h1 id="word-display" class="word-text"></h1>
 
-        <input type='text' id='word' placeholder='Enter word'/>
-
-        <h1 id='word-display'></h1>
-
-        <h1 id='def-display'></h1>
-
+            <h2 id="def-display" class="def-text"></h2>
+        </div>
     </div>
 
     <script>
