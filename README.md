@@ -9,5 +9,3 @@ We fine-tuned the language model GPT-2 on the words and corresponding definition
 We coded the website with Node.js and Express for the webserver backend, handlebars for HTML templating, and Sass for styling. We used the Twitter API to implement a button for tweeting about Fictionary to your friends. We used the Zazzle API to implement a button for buying a mug that displays your word and definition.
 
 We coded an API using the Flask Python framework that we use to communicate between the model and website.
-
-logan testing, delete right after
