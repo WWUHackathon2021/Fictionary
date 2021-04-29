@@ -1,6 +1,6 @@
 # Fictionary
 
-Our team created a web application that generates coherent definitions fictitious for words. We created this project in less than 24 hours during the 2021 Western Washington University Hackathon and won 1st place in the category for students starting without code.
+Our team created a web application that generates coherent definitions for fictitious words. We created this project in less than 24 hours during the 2021 Western Washington University Hackathon and won 1st place in the category for students starting without code.
 
 The app consists of a language model, a website, and an API that passes information between the two.
 
